@@ -16,7 +16,6 @@
 
         .container {
             display: flex;
-            flex-direction: column;
             height: 100vh;
         }
 
@@ -64,16 +63,75 @@
             margin-top: 0;
         }
 
-        .main {
-            flex: 1;
-            margin: 20px;
-            position: relative;
-            margin-left: 300px; /* Offset for sidebar */
+        .toolbar {
+            position: absolute;
+            top: 60px;
+            left: 250px;
+            width: calc(100% - 250px);
+            display: flex;
+            justify-content: space-between;
+            background: #1e1e1e;
+            padding: 10px;
+            border-bottom: 2px solid #333;
+            z-index: 10;
         }
 
-        canvas {
+        .toolbar button {
+            margin: 0 5px;
+            padding: 10px;
+            background: #007bff;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .toolbar button:hover {
+            background: #0056b3;
+        }
+
+        .hierarchy {
+            width: 250px;
+            background: #1e1e1e;
+            padding: 20px;
             border-radius: 10px;
-            background: #000;
+            margin: 20px;
+            margin-left: 0;
+        }
+
+        .hierarchy h2 {
+            margin-top: 0;
+        }
+
+        .hierarchy ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .hierarchy ul li {
+            margin: 5px 0;
+            cursor: pointer;
+            color: #007bff;
+        }
+
+        .hierarchy ul li:hover {
+            text-decoration: underline;
+        }
+
+        .inspector {
+            width: 250px;
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px;
+            margin-left: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .inspector h2 {
+            margin-top: 0;
         }
 
         .file-explorer {
@@ -135,6 +193,13 @@
             color: #007bff;
             font-weight: bold;
         }
+
+        canvas {
+            border-radius: 10px;
+            background: #000;
+            flex: 1;
+            height: calc(100vh - 80px); /* Adjust canvas height */
+        }
     </style>
 </head>
 <body>
@@ -151,8 +216,22 @@
             <button id="exportSceneBtn">Export Scene</button>
             <button id="exportScriptBtn">Export .altereng Script</button>
         </div>
-        <div class="main">
-            <canvas id="gameCanvas"></canvas>
+        <div class="toolbar">
+            <button id="moveTool">Move</button>
+            <button id="rotateTool">Rotate</button>
+            <button id="scaleTool">Scale</button>
+        </div>
+        <div class="hierarchy">
+            <h2>Hierarchy</h2>
+            <ul id="hierarchyList">
+                <!-- Scene objects will be dynamically added here -->
+            </ul>
+        </div>
+        <div class="inspector">
+            <h2>Inspector</h2>
+            <div id="inspectorContent">
+                <!-- Selected object properties will be displayed here -->
+            </div>
         </div>
         <div class="file-explorer">
             <h3>File Explorer</h3>
@@ -160,6 +239,9 @@
                 <!-- Starter files and folders will be dynamically added here -->
             </ul>
             <button id="addFileBtn">Add New File</button>
+        </div>
+        <div class="main">
+            <canvas id="gameCanvas"></canvas>
         </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -241,11 +323,29 @@
         const sceneInput = document.getElementById('sceneInput');
         const scriptInput = document.getElementById('scriptInput');
         const fileList = document.getElementById('fileList');
+        const hierarchyList = document.getElementById('hierarchyList');
+        const inspectorContent = document.getElementById('inspectorContent');
 
         // Sidebar toggle
         document.getElementById('hamburgerMenu').addEventListener('click', () => {
             const sidebar = document.getElementById('sidebar');
             sidebar.style.display = sidebar.style.display === 'none' || sidebar.style.display === '' ? 'flex' : 'none';
+        });
+
+        // Toolbar tool buttons
+        document.getElementById('moveTool').addEventListener('click', () => {
+            console.log('Move tool selected');
+            // Implement move tool functionality
+        });
+
+        document.getElementById('rotateTool').addEventListener('click', () => {
+            console.log('Rotate tool selected');
+            // Implement rotate tool functionality
+        });
+
+        document.getElementById('scaleTool').addEventListener('click', () => {
+            console.log('Scale tool selected');
+            // Implement scale tool functionality
         });
 
         // Load scene
@@ -384,6 +484,29 @@
                 renderFileList(fileSystem);
             }
         });
+
+        // Hierarchy and Inspector updates
+        function updateHierarchy() {
+            hierarchyList.innerHTML = '';
+            const li = document.createElement('li');
+            li.innerText = 'Cube';
+            li.onclick = () => {
+                updateInspector(cube);
+            };
+            hierarchyList.appendChild(li);
+        }
+
+        function updateInspector(object) {
+            inspectorContent.innerHTML = `
+                <strong>Object Properties:</strong>
+                <p><strong>Position:</strong> ${object.position.toArray()}</p>
+                <p><strong>Rotation:</strong> ${object.rotation.toArray()}</p>
+                <p><strong>Color:</strong> ${object.material.color.getHexString()}</p>
+            `;
+        }
+
+        // Initial hierarchy and inspector update
+        updateHierarchy();
     </script>
 </body>
 </html>
